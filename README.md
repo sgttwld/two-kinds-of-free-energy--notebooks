@@ -1,4 +1,4 @@
-# two-notions-of-free-energy-notebooks
+# two-kinds-of-free-energy--notebooks
 This repository contains supporting information for the article [The two kinds of free energy and the Bayesian revolution](https://arxiv.org/abs/2004.11763) (Gottwald, Braun 2020).
 
 * [__S1 Notebook__](https://github.com/sgttwld/two-kinds-of-free-energy--notebooks/blob/master/S1_Notebook.ipynb) _Comparison of different formulations of Active Inference_ ([view on nbviewer](https://nbviewer.jupyter.org/github/sgttwld/two-kinds-of-free-energy--notebooks/blob/master/S1_Notebook.ipynb), [html version](https://github.com/sgttwld/two-kinds-of-free-energy--notebooks/blob/master/S1_Notebook.html))
