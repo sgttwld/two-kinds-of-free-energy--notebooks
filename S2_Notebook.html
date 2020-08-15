@@ -14184,8 +14184,7 @@ width=200
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># run the agent (jupyter notebook only)</span>
-<span class="n">env</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span><span class="n">episodes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># run the agent (jupyter notebook only)↔</span>
 </pre></div>
 
     </div>
@@ -14226,13 +14225,13 @@ Navigating...Fail: Episode stopped after 5 steps
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="2.-Explanation">2. <em>Explanation</em><a class="anchor-link" href="#2.-Explanation">&#182;</a></h1><p>The action policies in the above algorithms are essentially given by (for simplicity neglecting fixed action priors and considering only one step)</p>
 $$
-p(A) = \left\{\begin{array}{cc} \sum_{x}\underbrace{\frac{p_\mathrm{pred}(x|A)}{\mathcal Z(x)}}_{=p_\mathrm{Bayes}(A|x)} \,  p_\mathrm{des}(x) &amp; (\textit{Jeffrey}) \\ \frac{1}{\mathcal Z}\, \sum_{x} p_\mathrm{pred}(x|A) \, p_\mathrm{des}(x)  &amp; (\textit{Control as Inference}) \\ \frac{1}{\mathcal Z} \, \exp\Big[ \sum_x p_\mathrm{pred}(x|A)  \, \log p_\mathrm{des}(x)\Big] &amp; (\textit{Expected Utility}) \\ 
+p(A) = \left\{\begin{array}{cc} \sum_{x}\underbrace{\frac{p_\mathrm{pred}(x|A)}{\mathcal Z(x)}}_{=p_\mathrm{Bayes}(A|x)} \,  p_\mathrm{des}(x) &amp; (\textit{Conditioning on $p_\mathrm{des}$}) \\ \frac{1}{\mathcal Z}\, \sum_{x} p_\mathrm{pred}(x|A) \, p_\mathrm{des}(x)  &amp; (\textit{Conditioning on success}) \\ \frac{1}{\mathcal Z} \, \exp\Big[ \sum_x p_\mathrm{pred}(x|A)  \, \log p_\mathrm{des}(x)\Big] &amp; (\textit{Expected Utility}) \\ 
 \frac{1}{\mathcal Z} \exp\Big[\underbrace{\sum_x q(x|A) \, \log p_\mathrm{des}(x) + \textit{other terms}}_{= \,-F_S(A)+Q(q)} \Big] &amp; (\textit{$Q$-value Active Inference}) \\
 \frac{1}{\mathcal Z} \exp\Big[ \underbrace{-D_\mathrm{KL}(p_\mathrm{pred}(X|A)\|p_\mathrm{des}(X)) - \langle H(p_0(X|S))\rangle_{p_0(X,S|A)}}_{= \, Q(p_\mathrm{pred})\, =\, \langle \log p_\mathrm{des} \rangle + \langle D_\mathrm{KL}(p_0(X|S)\|p_\mathrm{pred}(X|A))\rangle }\Big] &amp; (\textit{softmax of  $Q_\mathrm{exact}=Q(p_\mathrm{pred})$})\end{array}\right.
 $$<p>where $p_\mathrm{pred}(X|A)$ denotes the predictive distribution of future consequences $X$ given the action $A$ resulting from the generative model $p_0$, $\mathcal Z$ denotes normalization constants, and $\mathcal Z(x)=\sum_a p_\mathrm{pred}(x|a)$ normalizes the Bayes posterior $p(A|x)$ in Jeffrey's conditioning rule.</p>
 <p>We can now understand the behaviour of the algorithms as follows:</p>
 <ul>
-<li><p><strong>Naive conditioning vs. conditioning on success</strong>: When comparing the two ways of directly performing inference over actions, i.e. Jeffrey conditioning and Control as Inference (e.g. Toussaint 2006), we can see that they only differ in the order of normalizing and taking the expected value over $X$. This means that, in the approach using naive Jeffrey conditionalization, first a goal $X=x$ is sampled from $p_\mathrm{des}$ and then a path is planned by calculating $p(A|x)$, which is why the simulation can fail in case the top goal is sampled from $p_\mathrm{des}$, which is in an area of bad vision. In contrast, Toussaint's version of inference weighs the desirability of an outcome $p_\mathrm{des}(x)$ with its realizability given by $p_\mathrm{pred}(x|A)$, so that which $x$ is chosen to plan a path depends on how well it can be navigated to.</p>
+<li><p><strong>Conditioning on $p_\mathrm{des}$ vs. conditioning on success</strong>: When comparing the two ways of directly performing inference over actions, i.e. Jeffrey conditioning and Control as Inference (e.g. Toussaint 2006), we can see that they only differ in the order of normalizing and taking the expected value over $X$. This means that, in the approach using naive Jeffrey conditionalization, first a goal $X=x$ is sampled from $p_\mathrm{des}$ and then a path is planned by calculating $p(A|x)$, which is why the simulation can fail in case the top goal is sampled from $p_\mathrm{des}$, which is in an area of bad vision. In contrast, Toussaint's version of inference weighs the desirability of an outcome $p_\mathrm{des}(x)$ with its realizability given by $p_\mathrm{pred}(x|A)$, so that which $x$ is chosen to plan a path depends on how well it can be navigated to.</p>
 </li>
 <li><p><strong>Expected Utility</strong>: Similar to Control as Inference, in expected utility approaches the utility of outcomes, e.g. $U(x)=\log p_\mathrm{des}(x)$, is weighted with their realizability $p_\mathrm{pred}(x|A)$ to decide which $A$'s should be preferred. The difference to Control as Inference is how the desired distribution is transformed into a utility, which here is a completely arbitrary choice (for comparison's sake, we assume a desired distribution $p_\mathrm{des}$ for all approaches, which is uniformly distributed over the goal states).</p>
 </li>
@@ -14249,6 +14248,19 @@ $$<p>where $p_\mathrm{pred}(X|A)$ denotes the predictive distribution of future 
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
