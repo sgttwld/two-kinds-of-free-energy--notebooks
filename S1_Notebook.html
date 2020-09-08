@@ -13080,14 +13080,14 @@ div#notebook {
 <h1 id="S1-Notebook:-Comparison-of-different-formulations-of-Active-Inference">S1 Notebook: <em>Comparison of different formulations of Active Inference</em><a class="anchor-link" href="#S1-Notebook:-Comparison-of-different-formulations-of-Active-Inference">&#182;</a></h1><p>This notebook is published as supporting information accompanying the article <em>Gottwald, Braun. The two kinds of free energy and the Bayesian revolution</em>.</p>
 <p>The structure of this notebook is as follows:</p>
 <ul>
-<li>Sections 1 and 2 compare recent formulations of <em>Active Inference</em> found in the literature (2013-2019),</li>
+<li>Sections 1 and 2 compare recent formulations of <em>Active Inference</em> found in the literature (2013-2018),</li>
 <li>Section 3 presents mean-field solutions for each version in the general case of arbitrarily many time steps, and</li>
 <li>Section 4 presents their exact solutions.</li>
 <li>Section 5 lists some critical remarks</li>
 </ul>
 <p>For each formulation listed below, changes from the preceding formulation are <span style="color:red;">marked in red</span> in order to quickly see the differences.</p>
 <h1 id="1.-Commonalities-among-all-versions-of-Active-Inference-listed-below">1. Commonalities among all versions of Active Inference listed below<a class="anchor-link" href="#1.-Commonalities-among-all-versions-of-Active-Inference-listed-below">&#182;</a></h1><hr>
-<h4 id="Assumed-given-distributions"><em>Assumed given distributions</em><a class="anchor-link" href="#Assumed-given-distributions">&#182;</a></h4><p>Likelihood $p_0(X|S)$, prior over the initial state $p_0(S_0)$, transition probability $p_0(S'|S,A)$, and a desired distribution $p_\mathrm{des}$ which is either defined on future <em>states</em> (2013) or future <em>observations</em> (2015-2019).</p>
+<h4 id="Assumed-given-distributions"><em>Assumed given distributions</em><a class="anchor-link" href="#Assumed-given-distributions">&#182;</a></h4><p>Likelihood $p_0(X|S)$, prior over the initial state $p_0(S_0)$, transition probability $p_0(S'|S,A)$, and a desired distribution $p_\mathrm{des}$ which is either defined on future <em>states</em> (2013) or future <em>observations</em> (2015-2018).</p>
 <h4 id="Random-Variables"><em>Random Variables</em><a class="anchor-link" href="#Random-Variables">&#182;</a></h4><p>The involved random variables are indexed by a time parameter $\tau\in \{0,\dots,T\}$,</p>
 $$
 \mathbf{X} = (X_\tau)_{\tau=0}^T = (X_0,\dots, X_T) ,\quad \mathbf{S} = (S_\tau)_{\tau=0}^T =(S_0,\dots,S_{T}), \quad \mathbf{A} = (A_\tau)_{\tau=0}^{T-1} =(A_0,\dots, A_{T-1})
@@ -13260,28 +13260,6 @@ $$<hr>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="2019---Parr-and-Friston.-Generalised-free-energy-and-active-inference"><strong>2019</strong> - <em>Parr and Friston. Generalised free energy and active inference</em><a class="anchor-link" href="#2019---Parr-and-Friston.-Generalised-free-energy-and-active-inference">&#182;</a></h2><h4 id="Desired-distribution,-generative-model"><em>Desired distribution, generative model</em><a class="anchor-link" href="#Desired-distribution,-generative-model">&#182;</a></h4><p>Same as in the 2016/2017 version.</p>
-<h4 id="Reference"><em>Reference</em><a class="anchor-link" href="#Reference">&#182;</a></h4><p>Here, the desired distribution $p_\mathrm{des}$ and the generative model $p_0$ are combined using modified "likelihoods"</p>
-$$
-\color{red}{\tilde p_0(X_\tau|S_\tau)} := \frac{p_\mathrm{des}(X_\tau) \, p_0(X_\tau|S_\tau)}{\color{red}{\sum_{x_\tau} p_\mathrm{des}(x_\tau) p_0(x_\tau|S_\tau)}}
-$$<p>where $\tau&gt;t$, so that</p>
-$$
-\phi_\mathrm{ref}(\mathbf{X},\mathbf{S},\mathbf{A}) = \color{red}{\left(\prod_{\tau = t+1}^T \tilde p_0(X_\tau|S_\tau) \right)} p_0(\mathbf{X}_t,\mathbf{S}|\mathbf{A})\, p_0(\mathbf{A}_f)
-$$<h4 id="Trial-distributions"><em>Trial distributions</em><a class="anchor-link" href="#Trial-distributions">&#182;</a></h4><p>Same as in the 2018 version.</p>
-<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>For a given set of observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$,</p>
-$$
-F(q\|\phi_\mathrm{ref}) = \left\langle \log \frac{q(\mathbf{X}_f,\mathbf{S},\mathbf{A}_f)}{\phi_\mathrm{ref}((\mathbf{x}_t,\mathbf{X}_f),\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f)) } \right\rangle_{q(\mathbf{X}_f,\mathbf{S},\mathbf{A}_f)} \\
-\qquad = 
-\color{red}{\big\langle D_\mathrm{KL}\big(p_0(\mathbf{X}_f|\mathbf{S}_f) \| \tilde p_0(\mathbf{X}_f|\mathbf{S}_f)\big) \big\rangle_{q(\mathbf{S}_f|\mathbf{A}_f)\,q(\mathbf{A}_f)}}
-+ \left\langle \log \frac{ q(\mathbf{S}|\mathbf{A}_f)}{p_0(\mathbf{x}_t,\mathbf{S}|\mathbf{a}_{t-1}, \mathbf{A}_f)} \right\rangle_{q(\mathbf{S}|\mathbf{A}_f)q(A_f)}
-+ D_\mathrm{KL}\big(q(\mathbf{A}_f)\|p_0(\mathbf{A}_f)\big)
-$$
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="3.-Iterative-Mean-Field-Solutions">3. Iterative Mean-Field Solutions<a class="anchor-link" href="#3.-Iterative-Mean-Field-Solutions">&#182;</a></h1><hr>
 <p>Here, we show the resulting mean-field solutions <strong>when neglecting the extra dependency of $Q$ on trial distributions $q$</strong> (in the 2015 and 2016/2017 versions), which is an assumption that is made in the Active Inference literature, but results in <strong>very different behavior than when it is correctly included</strong> (see S2 Notebook: Grid world simulations). The proportionality symbol $\propto$ means that the expressions are equal up to multiplicative constants, in particular, the right side has to be normalized with respect to the corresponding variable in order to be a probability distribution. Also, to simplify notation, the transition probabilities $p_0(S_\tau|S_{\tau-1},A_{\tau-1})$ also include the prior $p_0(S_0)$ for $\tau = 0$.</p>
 
@@ -13374,26 +13352,6 @@ $$
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="2019"><strong>2019</strong><a class="anchor-link" href="#2019">&#182;</a></h2><p><strong>States:</strong>
-For $\tau\leq t$, $q^\ast(S_\tau)$ has the same shape as the 2016 version, whereas for $\tau&gt;t$,</p>
-$$q^\ast(S_\tau|\mathbf{A}_{t:\tau-1})
- \propto \frac{1}{\color{red}{\sum_{x_\tau}p_0(x_\tau|S_\tau)p_\mathrm{des}(x_\tau)}} \exp\Big[\langle \log p_0(S_\tau|S_{\tau-1},A_{\tau-1})\rangle_{q(S_{\tau-1}|\mathbf{A}_{t:\tau-2})} \\
- \qquad \qquad +\, \langle \log p_0(S_{\tau+1}|S_{\tau},A_{\tau})\rangle_{q(S_{\tau+1}|A_{t:\tau})q(A_\tau)}+ \langle \log p_\mathrm{des}(X_\tau)\rangle_{p_0(X_\tau|S_\tau)} \Big] 
-$$<p>Here, the extra term in the denominator originates from the re-normalization in the modified likelihood $\tilde p_0(X_\tau|S_\tau)$ for $\tau&gt;t$.</p>
-<p><strong>Actions:</strong></p>
-$$
-q^\ast(\mathbf{A}_f) \propto p_0(\mathbf{A}_f) \, e^{-\mathcal F_{\mathbf{S}}(\mathbf{x}_t,\mathbf{a}_{t-1},\mathbf{A}_f)  + D(\mathbf{A}_f)}
-$$<p>where</p>
-$$
-D(\mathbf{A}_f) := \color{red}{\big\langle D_\mathrm{KL}\big(p_0(\mathbf{X}_f|\mathbf{S}_f) \| \tilde p_0(\mathbf{X}_f|\mathbf{S}_f)\big) \big\rangle_{q(\mathbf{S}_f|\mathbf{A}_f)}} = \sum_{\tau=t+1}^T \left\langle \log \frac{p_\mathrm{des}(X_\tau)}{\color{red}{\sum_{x_\tau}p_0(x_\tau|S_\tau)p_\mathrm{des}(x_\tau)}} \right \rangle_{p_0(X_\tau|S_\tau)q(S_\tau|\mathbf{A}_{t:\tau-1})}
-$$<p><strong>Note:</strong> The action distribution $q^\ast(\mathbf{A}_f)$ seems to depend on the other factors and $p_\mathrm{des}$, but this is a misleading consequence of the alternating free energy minimization, because it actually approximates the trivial action distribution $p_0(A)$, as we are discussing below and in Section 5.3 of the article.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="4.-Exact-Solutions">4. Exact Solutions<a class="anchor-link" href="#4.-Exact-Solutions">&#182;</a></h1><hr>
 <p>Here, we show the trial distributions that would minimize the various free energies perfectly. <strong>The variational solutions shown above are supposed to approximate these exact solutions</strong>.</p>
 <p>In general, as follows directly from Jensen's inequality, the exact solution to a variational free energy problem of the form 
@@ -13460,26 +13418,9 @@ Hence, the Active Inference problem in this version can be solved <em>exactly</e
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="2019"><strong>2019</strong><a class="anchor-link" href="#2019">&#182;</a></h2><p>The exact solution to the 2019 version is <strong>the trivial prior $p_0(A)$</strong>, which is why its mean-field solution shown above <strong>does not show goal-directed behavior</strong>. This can be either seen by the argument in Section 5.3 of the article, or by calculating it directly: We have</p>
-$$
-q^\ast(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f) = 
-\frac{\phi_\mathrm{ref}\big((\mathbf{x}_t,\color{red}{\mathbf{X}_f}),\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f)\big)}{\sum_{\color{red}{\mathbf{x}_f},\mathbf{s},\mathbf{a}_f}\phi_\mathrm{ref}\big((\mathbf{x}_t,\color{red}{\mathbf{x}_f}),\mathbf{s},(\mathbf{a}_{t-1},\mathbf{a}_f)\big)}
-= \color{red}{p_0(\mathbf{A}_f)} \,\frac{p_0(\mathbf{x}_t,\mathbf{S}|\mathbf{a}_{t-1},\mathbf{A}_f) }{\sum_{\mathbf{s}_t} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) }\, \color{red}{\tilde p_0(\mathbf{X}_f|\mathbf{S}_f)} 
-$$<p>and therefore</p>
-$$
-q^\ast(\mathbf{A}_f) = \sum_{\mathbf{x}_f,\mathbf{s}} q^\ast(\mathbf{x}_f,\mathbf{s},\mathbf{A}_f) = p_0(\mathbf{A}_f) \frac{\sum_{\mathbf{s}_t}p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) \color{red}{\prod_{\tau=t+1}^T \sum_{s_\tau} p_0(s_{\tau}|s_{\tau-1},A_{\tau-1})} }{\sum_{\mathbf{s}_t} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) } = \color{red}{p_0(\mathbf{A}_f)},
-$$<p></p>
-<p>where the sums over $s_\tau$ in the numerator equate to $1$ by starting at $\tau=T$ and going backwards. Hence, selecting actions here does not require any inference over states and the actions sampled from $q^\ast(\mathbf{A})=p_0(\mathbf{A})$ will not depend on the desired distribution $p_\mathrm{des}$. This can however easily be addressed by simply removing the normalization when merging $p_\mathrm{des}$ with $p_0$, in which case it results in the 2018 version, i.e. in a special case of Control as Inference.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="5.-Critical-Remarks-(see-Section-5.3-of-the-article-for-more-details)">5. Critical Remarks (see Section 5.3 of the article for more details)<a class="anchor-link" href="#5.-Critical-Remarks-(see-Section-5.3-of-the-article-for-more-details)">&#182;</a></h1><hr>
 <ul>
-<li><strong>Combining $p_\mathrm{des}$ and $p_0$ is not unique:</strong> In all $Q$-value versions of Active Inference, the desired distribution is put into the reference via a specifically designed value function, whereas in the direct Active Inference approaches (2018,2019), it is directly multiplied to the reference model. In general, there is no unique approach of how to combine the desired distribution with the generative model.</li>
+<li><strong>Combining $p_\mathrm{des}$ and $p_0$ is not unique:</strong> In all $Q$-value versions of Active Inference (2013-2017), the desired distribution is put into the reference via a specifically designed value function, whereas in direct Active Inference (2018), it is directly multiplied to the reference model. In general, there is no unique approach of how to combine the desired distribution with the generative model.</li>
 </ul>
 <ul>
 <li><p><strong>The reference depends on $q$:</strong> The reference functions in most Active Inference approaches using a value function $Q$ depend (non-linearly) on trial distributions, in particular they also change during free energy optimization with respect to $q$. This is both, conceptually and practically problematic:</p>
@@ -13490,16 +13431,24 @@ $$<p></p>
 </li>
 </ul>
 <ul>
-<li><p><strong>Conditioning on the past can only reproduce presupposed distributions:</strong> In Active Inference, one essentially conditions on past experience, which can only reproduce action distributions that are put into the reference:</p>
-<ul>
-<li>In $Q$-value Active Inference (2013-2017), this means that the form of <em>the action distribution is presupposed</em> to be of the form $\propto  p_0(A) e^{Q(A)}$.</li>
-<li>In "Generalized Free Energy" Active Inference (2019), this is even more severe because the resulting posterior only <em>approximates the fixed prior</em> $p_0(A)$. This can however easily be addressed by simply removing the normalization when merging $p_\mathrm{des}$ with $p_0$ (as is done in the 2018 version), which effectively can be considered as conditioning on an auxiliary success variable, rendering it as a special case of the Control as Inference approach that is popular in the machine learning literature (see Section 5.3 $(iii)$ of the article).</li>
-</ul>
-</li>
+<li><strong>Conditioning on the past can only reproduce presupposed distributions:</strong> In $Q$-value Active Inference (2013-2017), one essentially conditions on past experience, which can only reproduce action distributions that are put into the reference. This means that the form of <em>the action distribution is predefined</em>.</li>
 </ul>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     </div>
   </div>

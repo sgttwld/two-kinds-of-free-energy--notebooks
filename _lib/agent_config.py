@@ -24,7 +24,7 @@ def get_agent_config(env,sigmas,steps):
             'agent': ExactInference(env, vision=sigmas, maxSteps=steps),
         },
         'qmf': {
-            'name': 'Q-value Active Inference\n (mean-field; Friston et al. 2016)',
+            'name': 'Q-value Active Inference\n (mean-field; Friston et al. 2016/17)',
             'sname': 'Q-value Active Inference',
             'section': 'IV.a',
             'slug': 'qmf',
@@ -63,16 +63,8 @@ def get_agent_config(env,sigmas,steps):
             'name': 'Conditioning on success\n (Bethe ass.; Schwöbel et al. 2018)',
             'sname': 'Cond. on success (Bethe)',
             # 'name': 'direct Active Inference, \n conditioning on success (Bethe)',
-            'section': 'V.a',
+            'section': 'V.b',
             'slug': 'toussbethe',
             'agent': Toussaint(env,vision=sigmas,maxSteps=steps),
-        },
-        'genfe': {
-            'name': 'Conditioning only on past \n (Friston, Parr 2019)',
-            'sname': 'Cond. only on the past',
-            # 'name': 'direct Active Inference, \n conditioning on past',
-            'section': 'V.b',
-            'slug': 'genfe',
-            'agent': GeneralisedFreeEnergy(env,vision=sigmas,maxSteps=steps),
         },
     }
