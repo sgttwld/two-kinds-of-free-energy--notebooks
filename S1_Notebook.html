@@ -13093,10 +13093,10 @@ $$
 \mathbf{X} = (X_\tau)_{\tau=0}^T = (X_0,\dots, X_T) ,\quad \mathbf{S} = (S_\tau)_{\tau=0}^T =(S_0,\dots,S_{T}), \quad \mathbf{A} = (A_\tau)_{\tau=0}^{T-1} =(A_0,\dots, A_{T-1})
 $$<p>We also use the shorthand notation $\mathbf{Y}_t := (Y_0,\dots,Y_t)$, and more generally $\mathbf{Y}_{t_1:t_2} := (Y_{t_1},\dots,Y_{t_2})$. In the case of paths over future variables exclusively, for readability we also write $\mathbf{Y}_f := \mathbf{Y}_{t+1:T}$ for future observations and states, and $\mathbf{A}_f:=A_{t:T-1}$ for future actions.</p>
 <h4 id="Time-dependency"><em>Time dependency</em><a class="anchor-link" href="#Time-dependency">&#182;</a></h4><p>Even though this is not made explicit in the notation, all quantities (generative model, trial distributions, free energy, value function) depend on the current time $t$, i.e. they have to be re-determined for each new time step.</p>
-<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>The variational free energy serves as an error measure, which when minimized allows to fit trial distributions $q$ over unknown variables to a reference function $\phi_\mathrm{ref}$ that is constructed from the desired distribution $p_\mathrm{des}$ and a generative model $p_0$ (the full joint given by the fixed distributions),</p>
+<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>The variational free energy serves as an error measure, which when minimized allows to fit trial distributions $q$ over unknown variables to a reference function $\phi$ that is constructed from the desired distribution $p_\mathrm{des}$ and a generative model $p_0$ (the full joint given by the fixed distributions),</p>
 $$
-F = F(q\|\phi_\mathrm{ref}),
-$$<p>In general, the reference function in a variational free energy expression does not have to be a normalized probability distribution, but in case it is then the variational free energy coincides with the relative entropy or Kullback-Leibler divergence $D_\mathrm{KL}(q\|\phi_\mathrm{ref})$. Here, the past observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$ must be fixed since they are no unknowns. The details of how $\phi_\mathrm{ref}$ is constructed from $p_0$ and $p_\mathrm{des}$ and thus the resulting free energy expressions differ among the versions listed below.</p>
+F = F(q\|\phi),
+$$<p>In general, the reference function in a variational free energy expression does not have to be a normalized probability distribution, but in case it is then the variational free energy coincides with the relative entropy or Kullback-Leibler divergence $D_\mathrm{KL}(q\|\phi)$. Here, the past observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$ must be fixed since they are no unknowns. The details of how $\phi$ is constructed from $p_0$ and $p_\mathrm{des}$ and thus the resulting free energy expressions differ between the versions listed below.</p>
 <h4 id="Mean-field-assumptions"><em>Mean-field assumptions</em><a class="anchor-link" href="#Mean-field-assumptions">&#182;</a></h4><p>In most treatments of Active Inference, some kind of mean-field assumption is used to factorize the trial distributions $q$ over hidden variables in order to simplify the optimization procedure. In general, mean-field assumptions are strong simplifications that transform an optimization problem from a high-dimensional space to multiple coupled optimization problems over smaller dimensional spaces. Here, the coupling is created by an alternating optimization procedure, where free energy is optimized with respect to each factor separately while the other factors are kept fixed. This dependency is similar to the implicit dependency on other fixed quantities such as observations $\mathbf{x}$. In general, the coupling between the factors of mean-field solutions, say $q^\ast(A)$ and $q^\ast(S)$ is however much weaker than the coupling between the random variables $S$ and $A$ in an exact factorization of the form $q(A,S) = q(A)q(S|A)$, where $q(S|A)$ depends on the <em>values</em> of $A$ rather than on its <em>distribution</em> $q(A)$. In the case of very narrow distributions, i.e. $q(A)\approx \delta_{A,a}$ for some value $a$, this differentiation becomes negligible (since the dependency on the value of $A$ and its distribution are then basically the same), which is why mean-field assumptions are successful in variational Bayesian inference if a single value of a certain hidden variable is able to explain the data well. However, in sequential decision-making problems, the coupling between the factors might be too weak, as can be seen in the simulations in Supporting Information <em>S2 Notebook</em>.</p>
 <h4 id="Remark"><em>Remark</em><a class="anchor-link" href="#Remark">&#182;</a></h4><p>In all of the current Active Inference literature, the dependencies of the trial beliefs $q(S_\tau|...)$ on actions is stated by simply writing $q(S_\tau|\pi)$ where $\pi$ denotes the full action trajectory, or, equivalently, $\pi$ is a map $\tau\mapsto A_\tau = \pi(\tau)$ from the time variable to actions. Instead of allowing the belief over states to depend on actions in the future, we have interpreted the notation $q(S_\tau|\pi)$ as $q(S_\tau|A_t,\dots, A_{\tau-1})$, so that beliefs over states can only depend on past actions (note that we omit the dependency of $q$ on already performed actions $a_0,\dots,a_{t-1}$ since they are treated like observations and are fixed during free energy optimization). In the grid world simulations the behavior of both variants is indistinguishable. We have also implemented an agent for the 2016/2017 version using the dependencies on the full trajectory, that can be tested in the grid world simulation in S2 Notebook (labelled <code>qmff</code>).</p>
 <h4 id="Summary"><em>Summary</em><a class="anchor-link" href="#Summary">&#182;</a></h4><table>
@@ -13131,8 +13131,8 @@ $$<p>In general, the reference function in a variational free energy expression 
 <td>Trial distributions</td>
 </tr>
 <tr>
-<td>$\phi_\mathrm{ref}$</td>
-<td>Reference model</td>
+<td>$\phi$</td>
+<td>Reference function</td>
 </tr>
 </tbody>
 </table>
@@ -13151,7 +13151,7 @@ $$<h4 id="Generative-model-(HMM)"><em>Generative model (HMM)</em><a class="ancho
 p_0(\mathbf{X}_t,\mathbf{S}_t|\mathbf{A}_{t-1}) = \left(\prod_{\tau = 0}^t p_0(X_\tau|S_\tau) \right) \ p_0(S_0)  \left (\prod_{\tau=1}^t  p_0(S_\tau|S_{\tau-1},A_{\tau-1})\right)
 $$<h4 id="Reference"><em>Reference</em><a class="anchor-link" href="#Reference">&#182;</a></h4><p>The desired distribution $p_\mathrm{des}$ and the generative model $p_0$ are combined via a value function $Q$ to define the reference function</p>
 $$
-\phi_\mathrm{ref}(\mathbf{X}_t,\mathbf{S}_t,\mathbf{A}) = p_0(\mathbf{X}_t,\mathbf{S}_t|\mathbf{A}_{t-1}) \, e^{Q(\mathbf{A}_f,S_t)}
+\phi(\mathbf{X}_t,\mathbf{S}_t,\mathbf{A}) = p_0(\mathbf{X}_t,\mathbf{S}_t|\mathbf{A}_{t-1}) \, e^{Q(\mathbf{A}_f,S_t)}
 $$<h4 id="Value-function"><em>Value function</em><a class="anchor-link" href="#Value-function">&#182;</a></h4><p>High value actions predict future states $S'$ that behave according to the desired distributions $p_\mathrm{des}(S')$,</p>
 $$
 Q(\mathbf{A}_f,S_t) = \left\langle  \log \frac{p_\mathrm{des}(S_T)}{p_0(S_T|S_t,\mathbf{A}_f)}  \right\rangle_{p_0(S_T|S_t,\mathbf{A}_f)} = - D_\mathrm{KL}\big(p_0(S_T|S_t,\mathbf{A}_f)\| p_\mathrm{des}(S_T) \big)
@@ -13160,7 +13160,7 @@ $$<p>where $p_0(S_T|S_t,\mathbf{A}_f) = \sum_{s_{t+1},...,s_{T-1}} p_0(S_T|s_{T-
 q(\mathbf{S}_t,\mathbf{A}_f) = q(\mathbf{A}_f) \prod_{\tau = 0}^t q(S_\tau) \, .
 $$<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>For a given set of observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$,</p>
 $$
-F(q\|\phi_\mathrm{ref}) = \left\langle \log \frac{q(\mathbf{S}_t,\mathbf{A}_f)}{\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\mathbf{S}_t,\mathbf{A}_f)} \\ 
+F(q\|\phi) = \left\langle \log \frac{q(\mathbf{S}_t,\mathbf{A}_f)}{\phi(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\mathbf{S}_t,\mathbf{A}_f)} \\ 
 \qquad \qquad = \underbrace{\left\langle \log \frac{q(\mathbf{S}_t)}{p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1})} \right\rangle_{q(\mathbf{S}_t)}}_{=:\mathcal F_{\mathbf{S}_t}(\mathbf{x}_t,\mathbf{a}_{t-1})} 
 + \left\langle D_\mathrm{KL}\big(q(\mathbf{A}_f)\| e^{Q(\mathbf{A}_f,S_t)}\big) \right\rangle_{q(S_t)}
 $$<p>where $\mathcal F_{\mathbf{S}_t}(\mathbf{x}_t,\mathbf{a}_{t-1}) := F(q(\mathbf{S}_t)\|p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1}))$ denotes the variational free energy over states only.</p>
@@ -13179,7 +13179,7 @@ p_\mathrm{des}(\color{red}{X'})
 $$<h4 id="Generative-model,-trial-distributions"><em>Generative model, trial distributions</em><a class="anchor-link" href="#Generative-model,-trial-distributions">&#182;</a></h4><p>Same as in the 2013 version.</p>
 <h4 id="Reference"><em>Reference</em><a class="anchor-link" href="#Reference">&#182;</a></h4><p>Has the same shape as in the 2013 version, but with a value function $Q$ that is no longer a function of the current state,</p>
 $$
-\phi_\mathrm{ref}(\mathbf{X}_t,\mathbf{S}_t,\mathbf{A}) = p_0(\mathbf{X}_t,\mathbf{S}_t|\mathbf{A}_{t-1}) \, e^{\color{red}{Q(\mathbf{A}_f)}}
+\phi(\mathbf{X}_t,\mathbf{S}_t,\mathbf{A}) = p_0(\mathbf{X}_t,\mathbf{S}_t|\mathbf{A}_{t-1}) \, e^{\color{red}{Q(\mathbf{A}_f)}}
 $$<h4 id="Value-function"><em>Value function</em><a class="anchor-link" href="#Value-function">&#182;</a></h4><p>The value function is now defined by</p>
 $$
 \color{red}{Q(\mathbf{A}_f)} = \color{red}{\sum_{\tau=t+1}^T Q_\tau(\mathbf{A}_{t:\tau-1})}, \\ 
@@ -13187,7 +13187,7 @@ Q_\tau(\mathbf{A}_{t:\tau-1}) = \left\langle \log \frac{\color{red}{p_0(X_\tau|S
 $$<p>where $p_0(S_\tau|S_t,\mathbf{A}_{t:\tau-1}) = \sum_{s_{t+1},...,s_{\tau-1}} p_0(S_\tau|s_{\tau-1},A_{\tau-1})\cdots p_0(s_{t+1}|S_{t},A_{t})$.</p>
 <h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>For a given set of observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$,</p>
 $$
-F(q\|\phi_\mathrm{ref}) = \left\langle \log \frac{q(\mathbf{S}_t,\mathbf{A}_f)}{\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\mathbf{S}_t,\mathbf{A}_f)} = \mathcal F_{\mathbf{S}_t}(\mathbf{x}_t,\mathbf{a}_{t-1})
+F(q\|\phi) = \left\langle \log \frac{q(\mathbf{S}_t,\mathbf{A}_f)}{\phi(\mathbf{x}_t,\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\mathbf{S}_t,\mathbf{A}_f)} = \mathcal F_{\mathbf{S}_t}(\mathbf{x}_t,\mathbf{a}_{t-1})
 + D_\mathrm{KL}\big(q(\mathbf{A}_f)\| e^{\color{red}{Q(\mathbf{A}_f)}}\big)
 $$<p>where, as above, $\mathcal F_{\mathbf{S}_t}(\mathbf{x}_t,\mathbf{a}_{t-1}) := F(q(\mathbf{S}_t)\|p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1}))$ denotes a free energy over states only. Note that $Q$ also depends on $\color{red}{q(S_t)}$, which is ignored in the derivations of the update equations in the Active Inference literature.</p>
 <hr>
@@ -13206,7 +13206,7 @@ $$
 p_0(\mathbf{X}_t,\color{red}{\mathbf{S}}|\color{red}{\mathbf{A}}) = \left(\prod_{\tau=0}^t p_0(X_\tau|S_\tau)\right)\ p_0(S_0) \left( \prod_{\tau = 1}^\color{red}{T} p_0(S_\tau|S_{\tau-1},A_{\tau-1}) \right)
 $$<h4 id="Reference"><em>Reference</em><a class="anchor-link" href="#Reference">&#182;</a></h4><p>In addition to the exponentiated value function, a fixed prior over future actions $p_0(\mathbf{A}_f)$ is multiplied to the reference,</p>
 $$
-\phi_\mathrm{ref}(\mathbf{X}_t,\color{red}{\mathbf{S}},\mathbf{A}) = p_0(\mathbf{X}_t,\color{red}{\mathbf{S}}|\color{red}{\mathbf{A}})\, p_0(\mathbf{A}_f) \, e^{Q(\mathbf{A}_f)}
+\phi(\mathbf{X}_t,\color{red}{\mathbf{S}},\mathbf{A}) = p_0(\mathbf{X}_t,\color{red}{\mathbf{S}}|\color{red}{\mathbf{A}})\, p_0(\mathbf{A}_f) \, e^{Q(\mathbf{A}_f)}
 $$<h4 id="Value-function"><em>Value function</em><a class="anchor-link" href="#Value-function">&#182;</a></h4><p>The predictive distribution $\sum_{s_t} p_0(S_\tau|s_t,\mathbf{A}_{t:\tau-1}) q(s_t)$ from the 2015 version is now replaced by the trial distribution $q(S_\tau|\mathbf{A}_{t:\tau-1})$,</p>
 $$
 Q(\mathbf{A}_f) = \sum_{\tau = t+1}^T Q_\tau(\mathbf{A}_{t:\tau-1}), \quad 
@@ -13216,7 +13216,7 @@ $$
 q(\color{red}{\mathbf{S}},\mathbf{A}_f) = q(\mathbf{A}_f) \left( \prod_{\tau=0}^t q(S_\tau)\right)  \color{red}{\left( \prod_{\tau=t+1}^T q(S_\tau|\mathbf{A}_{t:\tau-1})\right)}
 $$<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>For a given set of observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$,</p>
 $$
-F(q\|\phi_\mathrm{ref}) = \left\langle \log \frac{q(\color{red}{\mathbf{S}},\mathbf{A}_f)}{\phi_\mathrm{ref}(\mathbf{x}_t,\color{red}{\mathbf{S}},(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\color{red}{\mathbf{S}},\mathbf{A}_f)}\\
+F(q\|\phi) = \left\langle \log \frac{q(\color{red}{\mathbf{S}},\mathbf{A}_f)}{\phi(\mathbf{x}_t,\color{red}{\mathbf{S}},(\mathbf{a}_{t-1},\mathbf{A}_f))} \right\rangle_{q(\color{red}{\mathbf{S}},\mathbf{A}_f)}\\
 \qquad \qquad \qquad \quad = \underbrace{\left\langle \log \frac{q(\color{red}{\mathbf{S}|\mathbf{A}_f})}{p_0(\mathbf{x}_t,\color{red}{\mathbf{S}}|\mathbf{a}_{t-1}, \color{red}{\mathbf{A}_f})} \right\rangle_{q(\color{red}{\mathbf{S}|\mathbf{A}_f})\color{red}{q(A_f)}}}_{ \color{red}{\langle} \mathcal F_{\color{red}{\mathbf{S}}}(\mathbf{x}_t,\mathbf{a}_{t-1},\color{red}{\mathbf{A}_f})\color{red}{\rangle_{q(\mathbf{A}_f)}} } 
 + D_\mathrm{KL}\big(q(\mathbf{A}_f)\| p_0(\mathbf{A}_f) \, e^{Q(\mathbf{A}_f)}\big)
 $$<p>where</p>
@@ -13242,12 +13242,12 @@ $$<p>is a free energy over states only, for fixed $\mathbf{A}_f$. Note that $Q$ 
 <h2 id="2018----Schw&#246;bel-et-al.-Active-Inference,-Belief-Propagation,-and-the-Bethe-Approximation">2018 -  <em>Schw&#246;bel et al. Active Inference, Belief Propagation, and the Bethe Approximation</em><a class="anchor-link" href="#2018----Schw&#246;bel-et-al.-Active-Inference,-Belief-Propagation,-and-the-Bethe-Approximation">&#182;</a></h2><h4 id="Desired-distribution,-generative-model"><em>Desired distribution, generative model</em><a class="anchor-link" href="#Desired-distribution,-generative-model">&#182;</a></h4><p>Same as in the 2016/2017 version.</p>
 <h4 id="Reference"><em>Reference</em><a class="anchor-link" href="#Reference">&#182;</a></h4><p>Here, the desired distribution $p_\mathrm{des}$ and the generative model $p_0$ are combined by simply multiplying them without renormalization, which is a special case of <em>Control as Inference</em> (Toussaint 2006), where the extra factor is interpreted as the probability of an auxiliary success variable (see Section 5.3 $(iii)$ and S2 Notebook):</p>
 $$
-\phi_\mathrm{ref}(\color{red}{\mathbf{X}},\mathbf{S},\mathbf{A}) = \color{red}{\left(\prod_{\tau = t+1}^T p_\mathrm{des}(X_\tau) p_0(X_\tau|S_\tau) \right)} p_0(\mathbf{X}_t,\mathbf{S}|\mathbf{A})\, p_0(\mathbf{A}_f)
+\phi(\color{red}{\mathbf{X}},\mathbf{S},\mathbf{A}) = \color{red}{\left(\prod_{\tau = t+1}^T p_\mathrm{des}(X_\tau) p_0(X_\tau|S_\tau) \right)} p_0(\mathbf{X}_t,\mathbf{S}|\mathbf{A})\, p_0(\mathbf{A}_f)
 $$<h4 id="Trial-distributions-(in-case-of-a-partial-mean-field-assumption)"><em>Trial distributions</em> (in case of a partial mean-field assumption)<a class="anchor-link" href="#Trial-distributions-(in-case-of-a-partial-mean-field-assumption)">&#182;</a></h4>$$ 
 q(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f) = q(\mathbf{A}_f)  \left( \prod_{\tau=0}^t q(S_\tau)\right)  \left( \prod_{\tau=t+1}^T \color{red}{p_0(X_\tau|S_\tau)}\, q(S_\tau|\mathbf{A}_{t:\tau-1})\right)
 $$<h4 id="Variational-free-energy"><em>Variational free energy</em><a class="anchor-link" href="#Variational-free-energy">&#182;</a></h4><p>For a given set of observations $\mathbf{X}_t = \mathbf{x}_t$ and past actions $\mathbf{A}_{t-1} = \mathbf{a}_{t-1}$,</p>
 $$
-F(q\|\phi_\mathrm{ref}) = \left\langle \log \frac{q(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f)}{\phi_\mathrm{ref}((\mathbf{x}_t,\color{red}{\mathbf{X}_f}),\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f)) } \right\rangle_{q(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f)} \\
+F(q\|\phi) = \left\langle \log \frac{q(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f)}{\phi((\mathbf{x}_t,\color{red}{\mathbf{X}_f}),\mathbf{S},(\mathbf{a}_{t-1},\mathbf{A}_f)) } \right\rangle_{q(\color{red}{\mathbf{X}_f},\mathbf{S},\mathbf{A}_f)} \\
 \qquad = 
 \color{red}{\big\langle -\log p_\mathrm{des}(\mathbf{X}_f) \big\rangle_{p_0(\mathbf{X}_f|\mathbf{S}_f)q(\mathbf{S}_f|\mathbf{A}_f)\,q(\mathbf{A}_f)}}
 + \left\langle \log \frac{ q(\mathbf{S}|\mathbf{A}_f)}{p_0(\mathbf{x}_t,\mathbf{S}|\mathbf{a}_{t-1}, \mathbf{A}_f)} \right\rangle_{q(\mathbf{S}|\mathbf{A}_f)q(A_f)}
@@ -13373,7 +13373,7 @@ $$</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2013"><strong>2013</strong><a class="anchor-link" href="#2013">&#182;</a></h2><p>The exact solutions in the original version of Active Inference cannot be simplified much, due to the extra dependency on $S_t$ in the value function:</p>
 $$
-q^\ast(\mathbf{S}_t,\mathbf{A}_f) = \frac{\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))}{\sum_{\mathbf{s}_t,\mathbf{a}_f}\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{s}_t,(\mathbf{a}_{t-1},\mathbf{a}_f))} = \frac{e^{Q(\mathbf{A}_f,S_t)} p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1})}{ \sum_{\mathbf{a}_f}\sum_{s_t} e^{Q(\mathbf{a}_f,s_t)} \sum_{\mathbf{s}_{t-1}} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) }
+q^\ast(\mathbf{S}_t,\mathbf{A}_f) = \frac{\phi(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))}{\sum_{\mathbf{s}_t,\mathbf{a}_f}\phi(\mathbf{x}_t,\mathbf{s}_t,(\mathbf{a}_{t-1},\mathbf{a}_f))} = \frac{e^{Q(\mathbf{A}_f,S_t)} p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1})}{ \sum_{\mathbf{a}_f}\sum_{s_t} e^{Q(\mathbf{a}_f,s_t)} \sum_{\mathbf{s}_{t-1}} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) }
 $$<p>The action distribution is now given by the marginal,
 $$
 q^\ast(\mathbf{A}_f) = \sum_{\mathbf{s}_t} q^\ast(\mathbf{s}_t,\mathbf{A}_f)
@@ -13386,7 +13386,7 @@ $$</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2015"><strong>2015</strong><a class="anchor-link" href="#2015">&#182;</a></h2>$$
-q^\ast(\mathbf{S}_t,\mathbf{A}_f) = \frac{\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))}{\sum_{\mathbf{s}_t,\mathbf{a}_f}\phi_\mathrm{ref}(\mathbf{x}_t,\mathbf{s}_t,(\mathbf{a}_{t-1},\mathbf{a}_f))} = \frac{e^{\color{red}{Q(\mathbf{A}_f)}}}{\sum_{\mathbf{a}_f}e^{\color{red}{Q(\mathbf{a}_f)}}} \frac{p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1})}{\color{red}{\sum_{\mathbf{s}_{t}}} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) }
+q^\ast(\mathbf{S}_t,\mathbf{A}_f) = \frac{\phi(\mathbf{x}_t,\mathbf{S}_t,(\mathbf{a}_{t-1},\mathbf{A}_f))}{\sum_{\mathbf{s}_t,\mathbf{a}_f}\phi(\mathbf{x}_t,\mathbf{s}_t,(\mathbf{a}_{t-1},\mathbf{a}_f))} = \frac{e^{\color{red}{Q(\mathbf{A}_f)}}}{\sum_{\mathbf{a}_f}e^{\color{red}{Q(\mathbf{a}_f)}}} \frac{p_0(\mathbf{x}_t,\mathbf{S}_t|\mathbf{a}_{t-1})}{\color{red}{\sum_{\mathbf{s}_{t}}} p_0(\mathbf{x}_t,\mathbf{s}_t|\mathbf{a}_{t-1}) }
 $$<p>Due to the separation into states $\mathbf{S}_t$ and future actions $\mathbf{A}_f$, the action marginal distribution is simply given by the first factor</p>
 $$
 q^\ast(\mathbf{A}_f) = \sum_{\mathbf{s}_t} q^\ast(\mathbf{s}_t,\mathbf{A}_f)  \color{red}{=  \frac{e^{Q(\mathbf{A}_f)}}{\sum_{\mathbf{a}_f}e^{Q(\mathbf{a}_f)}}}
@@ -13423,9 +13423,9 @@ Hence, the Active Inference problem in this version can be solved <em>exactly</e
 <li><strong>Combining $p_\mathrm{des}$ and $p_0$ is not unique:</strong> In all $Q$-value versions of Active Inference (2013-2017), the desired distribution is put into the reference via a specifically designed value function, whereas in direct Active Inference (2018), it is directly multiplied to the reference model. In general, there is no unique approach of how to combine the desired distribution with the generative model.</li>
 </ul>
 <ul>
-<li><p><strong>The reference depends on $q$:</strong> The reference functions in most Active Inference approaches using a value function $Q$ depend (non-linearly) on trial distributions, in particular they also change during free energy optimization with respect to $q$. This is both, conceptually and practically problematic:</p>
+<li><p><strong>The reference depends on $q$:</strong> The reference functions in most Active Inference approaches using a value function $Q$ depend (non-linearly) on trial distributions $q$, $\phi=\phi(q)$, in particular they also change during free energy optimization with respect to $q$. This is both, conceptually and practically problematic:</p>
 <ul>
-<li>In variational Bayesian inference, free energy minimization corresponds to trial distributions being fitted to a <em>constant</em> reference (given by the probabilistic model evaluated under the quantities to be conditioned on). In Active Inference, the reference itself changes during free energy minimization, which means that it is not clear anymore what is actually approximated by the trial distributions.</li>
+<li>In variational Bayesian inference, free energy minimization corresponds to trial distributions being fitted to a <em>constant</em> reference $\phi$ (given by the probabilistic model evaluated under the quantities to be conditioned on). In Active Inference, the reference itself changes during free energy minimization, which means that it is not clear anymore what is actually approximated by the trial distributions.</li>
 <li>In practice, this extra dependency on $q$ is ignored by the Active Inference update equations. However, as can be seen in the simulations in S2 Notebook, when this dependency is included then the resulting behavior is very different and not goal-directed at all, reflecting the problem that the reference itself changes during the optimization which leads to unpredictable solutions.</li>
 </ul>
 </li>
